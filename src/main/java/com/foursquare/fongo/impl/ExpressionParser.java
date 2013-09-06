@@ -32,6 +32,7 @@ public class ExpressionParser {
   public final static String NE = "$ne";
   public final static String ALL = "$all";
   public final static String EXISTS = "$exists";
+  public final static String ORDER_BY = "$orderby";
   public final static String MOD = "$mod";
   public final static String IN = "$in";
   public final static String NIN = "$nin";
