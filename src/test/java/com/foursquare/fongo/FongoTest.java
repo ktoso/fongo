@@ -3,40 +3,19 @@ package com.foursquare.fongo;
 import ch.qos.logback.classic.Level;
 import com.foursquare.fongo.impl.ExpressionParser;
 import com.foursquare.fongo.impl.Util;
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.CommandResult;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.DBRef;
-import com.mongodb.FongoDBCollection;
-import com.mongodb.MongoException;
-import com.mongodb.QueryBuilder;
-import com.mongodb.WriteConcern;
-import com.mongodb.WriteResult;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import com.mongodb.*;
 import org.bson.BSON;
 import org.bson.Transformer;
 import org.bson.types.ObjectId;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.*;
 
 public class FongoTest {
 
@@ -1119,6 +1098,22 @@ public class FongoTest {
 
     // then
     assertEquals(new BasicDBObject("_id", 1).append("tags", Util.list("mongo", "javascript")), result);
+  }
+
+  @Test
+  public void shouldFindAllWirhOrderBy() throws Exception {
+    // given
+    DBCollection collection = newCollection();
+
+    BasicDBObject firstByName = new BasicDBObject("_id", 1234).append("name", "aaa");
+    BasicDBObject secondByName = new BasicDBObject("_id", 4423).append("name", "bbb");
+    collection.insert(firstByName, secondByName);
+
+    // when, { $orderby: { 'name': 1 } }
+    DBObject result = collection.findOne(new BasicDBObject(new BasicDBObject("$orderby", new BasicDBObject("name", 1))));
+
+    // then
+    assertEquals(firstByName, result);
   }
 
   @Test
